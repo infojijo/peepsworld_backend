@@ -5,15 +5,15 @@ $username = "b7_25573968";
 $password = "Peeps@2020";
 $dbname = "b7_25573968_peeps_db";
 
-
 mysql_connect($servername,$username,$password);
 @mysql_select_db($dbname) or die( "Unable to select database");
 
 $sql_event_details = " SELECT * FROM Feed 
-        LEFT JOIN User ON Feed.feedUserID = User.userID 
-        LEFT JOIN Post ON Feed.feedPostID = Post.postID
-        LEFT JOIN Poll ON Feed.feedPollID = Poll.pollID
-        ";	
+LEFT JOIN User ON Feed.feedUserID = User.userID 
+LEFT JOIN Post ON Feed.feedPostID = Post.postID  
+LEFT JOIN Poll ON Feed.feedPollID = Poll.pollID ";	
+
+//$sql_event_details = "SELECT * FROM Post";
 
 //mysqli_set_charset($conn,"utf8");
 $result=mysql_query($sql_event_details);
@@ -32,7 +32,22 @@ $coverPicID=  mysql_result($result,$i,'coverPicID');
 $postID =  mysql_result($result,$i,'postID');
 $postMessage =  mysql_result($result,$i,'postMessage');
 $postLink =  mysql_result($result,$i,'postLink');
-$postMedia =  mysql_result($result,$i,'postMedia');
+$postLat =  mysql_result($result,$i,'postLatitude');
+$postLong =  mysql_result($result,$i,'postLongitude');
+//event related
+$postContact =  mysql_result($result,$i,'postContact');
+$postEventStart =  mysql_result($result,$i,'postEventStart');
+$postEventEnd =  mysql_result($result,$i,'postEventEnd');
+$postEventHost =  mysql_result($result,$i,'postEventHost');
+//entertainment
+$postTitle = mysql_result($result,$i,'postTitle');
+//Lost Found
+$postLostFoundType = mysql_result($result,$i,'postLostFoundType');
+$postLostFoundName = mysql_result($result,$i,'postLostFoundName');
+$postLostFoundAge = mysql_result($result,$i,'postLostFoundAge');
+$postLostFoundGender = mysql_result($result,$i,'postLostFoundGender');
+
+
 
 //Poll
 $pollID =  mysql_result($result,$i,'pollID');
@@ -66,6 +81,7 @@ $feedEntityID = mysql_result($result,$i,'feedLevel');
 $sql_for_user_pic = "SELECT * FROM Media WHERE Media.mediaId = ".$profilePicId;
 $row = mysql_query($sql_for_user_pic);
 $profilePicUrl = mysql_result($row,0,'mediaUrl');
+//echo "\n Profile Pic URL -> ".$profilePicUrl."\n";
 
 //post media select
 $sql_post = "SELECT * FROM Media WHERE Media.postId = ".$postID;
@@ -79,7 +95,6 @@ while($j>-1){{
 $mediaId = mysql_result($result_post_media,$j,'mediaId');
 $mediaThumbUrl = mysql_result($result_post_media,$j,'mediaThumbUrl');
 $mediaUrl = mysql_result($result_post_media,$j,'mediaUrl');
-
 $uni[] = array("MediaId"=>$mediaId, "MediaUrl"=>$mediaUrl, "MediaThumpUrl" =>$mediaThumbUrl);
 
 }
@@ -111,6 +126,7 @@ $options[] = array("pollOptionID"=>$pollOptionID, "pollOpenText"=>$pollOpenText,
 }
     $k--;
 }
+//echo json_encode($options);
 $json_poll_options = $options;
 
 
@@ -137,6 +153,17 @@ $json_poll_options = $options;
                  'postId'=>$postID,
                  'postMessage'=> $postMessage, 
                  'postLink'=>$postLink,
+                 'postLat'=>$postLat,
+                 'postLong'=>$postLong,  
+                 'postContact'=>$postContact,
+                 'postEventStart'=>$postEventStart,
+                 'postEventEnd'=>$postEventEnd,
+                 'postEventHost'=>$postEventHost,
+                 'postTitle'=>$postTitle,   
+                 'postLostFoundType'=>$postLostFoundType,
+                 'postLostFoundName'=>$postLostFoundName,
+                 'postLostFoundAge'=>$postLostFoundAge,
+                 'postLostFoundGender'=>$postLostFoundGender,           
                  'Media'=>$json_media],
                  'Poll'=>[
                  'pollId'=>$pollID,
@@ -144,15 +171,14 @@ $json_poll_options = $options;
                  'pollTotalVotes'=> $pollTotalVotes,
                  'pollIsVoted'=>$pollIsVoted,
                  'pollOptions'=>$json_poll_options
-                 ]
-                
+                 ]            
                 ]
                 ];
 
             }  
     $i--;
 }
-    
+
 echo json_encode($json);
 
 ?>
