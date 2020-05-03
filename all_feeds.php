@@ -1,12 +1,18 @@
 <?php
 
-$servername =  "sql101.byethost7.com"; //"103.14.120.241";
-$username = "b7_25573968";
-$password = "Peeps@2020";
-$dbname = "b7_25573968_peeps_db";
 
-mysql_connect($servername,$username,$password);
-@mysql_select_db($dbname) or die( "Unable to select database");
+$servername =  "localhost"; //"103.14.120.241";
+$username = "peeps0586_feeddb";
+$password = "Peeps2020";
+$dbname = "peeps0586_feeddb";
+
+	// Create connection
+	$conn = new mysqli($servername, $username, $password, $dbname);
+	// Check connection
+	if ($conn->connect_error) {
+	    die("Connection failed: " . $conn->connect_error);
+	}
+	    
 
 $sql_event_details = " SELECT * FROM Feed 
 LEFT JOIN User ON Feed.feedUserID = User.userID 
@@ -16,122 +22,134 @@ LEFT JOIN Poll ON Feed.feedPollID = Poll.pollID ";
 //$sql_event_details = "SELECT * FROM Post";
 
 //mysqli_set_charset($conn,"utf8");
-$result=mysql_query($sql_event_details);
-$num = mysql_num_rows($result);  
 
-$i = $num-1;
-while ( $i > -1) {{
+//$result=mysql_query($sql_event_details);
+$result = $conn->query($sql_event_details);
+
+$num = $result->num_rows;
+
+
+if ($result->num_rows > 0) {
+while ($fetch_data = $result->fetch_assoc()) {
   
 //Profile Pic
-$profilePicId =  mysql_result($result,$i,'userProfilePicId');
+
+$profilePicId =  $fetch_data['userProfilePicId'];
+
 
 //Cover pic         
-$coverPicID=  mysql_result($result,$i,'coverPicID');
+$coverPicID=  $fetch_data['coverPicID'];
+
 
 //Post
-$postID =  mysql_result($result,$i,'postID');
-$postMessage =  mysql_result($result,$i,'postMessage');
-$postLink =  mysql_result($result,$i,'postLink');
-$postLat =  mysql_result($result,$i,'postLatitude');
-$postLong =  mysql_result($result,$i,'postLongitude');
+$postID =  $fetch_data['postID'];
+$postMessage =  $fetch_data['postMessage'];
+$postLink =  $fetch_data['postLink'];
+$postLat =  $fetch_data['postLatitude'];
+
+$postLong =  $fetch_data['postLongitude'];
 //event related
-$postContact =  mysql_result($result,$i,'postContact');
-$postEventStart =  mysql_result($result,$i,'postEventStart');
-$postEventEnd =  mysql_result($result,$i,'postEventEnd');
-$postEventHost =  mysql_result($result,$i,'postEventHost');
+$postContact =  $fetch_data['postContact'];
+$postEventStart =  $fetch_data['postEventStart'];
+$postEventEnd =  $fetch_data['postEventEnd'];
+$postEventHost =  $fetch_data['postEventHost'];
 //entertainment
-$postTitle = mysql_result($result,$i,'postTitle');
+$postTitle = $fetch_data['postTitle'];
 //Lost Found
-$postLostFoundType = mysql_result($result,$i,'postLostFoundType');
-$postLostFoundName = mysql_result($result,$i,'postLostFoundName');
-$postLostFoundAge = mysql_result($result,$i,'postLostFoundAge');
-$postLostFoundGender = mysql_result($result,$i,'postLostFoundGender');
+$postLostFoundType = $fetch_data['postLostFoundType'];
+$postLostFoundName = $fetch_data['postLostFoundName'];
+$postLostFoundAge = $fetch_data['postLostFoundAge'];
+$postLostFoundGender = $fetch_data['postLostFoundGender'];
 
 
 
 //Poll
-$pollID =  mysql_result($result,$i,'pollID');
-$pollQuestion =  mysql_result($result,$i,'pollQuestion');
-$pollTotalVotes =  mysql_result($result,$i,'pollTotalVotes');
-$pollIsVoted =  mysql_result($result,$i,'isVoted');
+$pollID =  $fetch_data['pollID'];
+$pollQuestion =  $fetch_data['pollQuestion'];
+$pollTotalVotes =  $fetch_data['pollTotalVotes'];
+$pollIsVoted =  $fetch_data['isVoted'];
 
 //Media
-$mediaId = mysql_result($result,$i,'mediaId');
-$mediaThumbUrl =  mysql_result($result,$i,'mediaThumbUrl');
-$mediaUrl =  mysql_result($result,$i,'mediaUrl');
+$mediaId = $fetch_data['mediaId'];
+$mediaThumbUrl =  $fetch_data['mediaThumbUrl'];
+$mediaUrl =  $fetch_data['mediaUrl'];
 
 //Creator
-$creatorArray = mysql_result($result,$i,'emailid');
-$creatorFullName =  mysql_result($result,$i,'firstName');
-$creatorDOB  =  mysql_result($result,$i,'dob');
-$creatorContactNo  =  mysql_result($result,$i,'mobileNo');
-$creatorProfilePicId  =  mysql_result($result,$i,'userProfilePicId');
+$creatorArray = $fetch_data['emailid'];
+$creatorFullName =  $fetch_data['firstName'];
+$creatorDOB  =  $fetch_data['dob'];
+$creatorContactNo  =  $fetch_data['mobileNo'];
+$creatorProfilePicId  =  $fetch_data['userProfilePicId'];
 
 //Feed
-$feedType = mysql_result($result,$i,'feedType');
-$feedId = mysql_result($result,$i,'feedID');
-$feedCommentCount = mysql_result($result,$i,'feedCommentCount');
-$feedCreatedAt = mysql_result($result,$i,'feedCreatedAt');
-$feedLikeCount = mysql_result($result,$i,'feedLikeCount');
-$feedNormalPostID = mysql_result($result,$i,'feedPostID');
-$feedCreatorID = mysql_result($result,$i,'userID');
-$feedEntityID = mysql_result($result,$i,'feedLevel');
+$feedType = $fetch_data['feedType'];
+$feedId = $fetch_data['feedID'];
+$feedCommentCount = $fetch_data['feedCommentCount'];
+$feedCreatedAt = $fetch_data['feedCreatedAt'];
+$feedLikeCount = $fetch_data['feedLikeCount'];
+$feedNormalPostID = $fetch_data['feedPostID'];
+$feedCreatorID = $fetch_data['userID'];
+$feedEntityID = $fetch_data['feedLevel'];
 
 //user profile pic details
 $sql_for_user_pic = "SELECT * FROM Media WHERE Media.mediaId = ".$profilePicId;
-$row = mysql_query($sql_for_user_pic);
-$profilePicUrl = mysql_result($row,0,'mediaUrl');
+$row = $conn->query($sql_for_user_pic);
+
+$fetch_data_user_pic = $row->fetch_assoc();
+
+$profilePicUrl = $fetch_data_user_pic['mediaUrl'];
+
 //echo "\n Profile Pic URL -> ".$profilePicUrl."\n";
 
 //post media select
 $sql_post = "SELECT * FROM Media WHERE Media.postId = ".$postID;
 $uni = array();	
-$result_post_media = mysql_query($sql_post);
-$num_post_media = mysql_num_rows($result_post_media);
+$result_post_media = $conn->query($sql_post);
+//$num_post_media = $result_post_media->num_rows;
 
-$j = $num_post_media-1;
+if ($result_post_media->num_rows > 0) {
+while ($row = $result_post_media->fetch_assoc()){
 
-while($j>-1){{
-$mediaId = mysql_result($result_post_media,$j,'mediaId');
-$mediaThumbUrl = mysql_result($result_post_media,$j,'mediaThumbUrl');
-$mediaUrl = mysql_result($result_post_media,$j,'mediaUrl');
+$mediaId = $row['mediaId'];
+$mediaThumbUrl = $row['mediaThumbUrl'];
+$mediaUrl = $row['mediaUrl'];
 $uni[] = array("MediaId"=>$mediaId, "MediaUrl"=>$mediaUrl, "MediaThumpUrl" =>$mediaThumbUrl);
+}}
 
-}
-    $j--;
-}
+
 $json_media = $uni;
+
 
 //poll options select
 $sql_poll_options = "SELECT * FROM pollOptions WHERE pollOptions.pollID = ".$pollID;
 $options = array();
-$result_poll_options = mysql_query($sql_poll_options);
-$num_poll_options = mysql_num_rows($result_poll_options);
+$result_poll_options = $conn->query($sql_poll_options);
+$num_poll_options = $result_poll_options->num_rows;
 
-$k = $num_poll_options-1;
 
-while($k>-1){{
-$pollOptionID = mysql_result($result_poll_options,$k,'pollOptionID');
-$pollOpenText = mysql_result($result_poll_options,$k,'optionText');
-$pollOptionMedia = mysql_result($result_poll_options,$k,'mediaID');
+if ($result_poll_options->num_rows > 0) {
+while($row_poll_option = $result_poll_options->fetch_assoc()){
+$pollOptionID = $row_poll_option['pollOptionID'];
+$pollOpenText = $row_poll_option['optionText'];
+$pollOptionMedia = $row_poll_option['mediaID'];
 
 //fetching mediaUrl
-
 $sql_for_option_pic = "SELECT * FROM Media WHERE Media.mediaId = ".$pollOptionMedia;
-$row = mysql_query($sql_for_option_pic);
-$optionPicUrl = mysql_result($row,0,'mediaUrl');
 
-$options[] = array("pollOptionID"=>$pollOptionID, "pollOpenText"=>$pollOpenText, "pollOptionMediaUrl" =>$optionPicUrl);
+$row = $conn->query($sql_for_option_pic);
 
-}
-    $k--;
-}
+$optionPicUrl = $row->fetch_assoc()['mediaUrl'];
+
+$options[] = array("pollOptionID"=>$pollOptionID, "pollOptionText"=>$pollOpenText, "pollOptionMediaUrl" =>$optionPicUrl);
+
+}}
+
 //echo json_encode($options);
 $json_poll_options = $options;
 
 
-            $json["Response"][] = [
-                 'feed' => [
+            $json["Feeds"][] = [
+              
                  'feedType'=> $feedType,
                  'feedID' => $feedId,
                  'feedLevel' => $feedEntityID,
@@ -172,13 +190,11 @@ $json_poll_options = $options;
                  'pollIsVoted'=>$pollIsVoted,
                  'pollOptions'=>$json_poll_options
                  ]            
-                ]
                 ];
 
-            }  
-    $i--;
 }
-
+}
 echo json_encode($json);
+
 
 ?>
